@@ -36,14 +36,14 @@ public class ProductController {
 
     // Delete product by ID
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable int id) {
-        productService.deleteProduct(id);
+    public void deleteProduct(@PathVariable int id, HttpServletRequest request) {
+        productService.deleteProduct(id, request);
     }
 
     // Update product (basic example)
     @PutMapping("/{id}")
-    public ProductResponse updateProduct(@PathVariable int id, @RequestBody ProductRequest updatedProduct) {
-        return productService.updateProduct(id, updatedProduct);
+    public ProductResponse updateProduct(@PathVariable int id, @RequestBody ProductRequest updatedProduct, HttpServletRequest request) {
+        return productService.updateProduct(id, updatedProduct, request);
     }
 
     // Upvote a product

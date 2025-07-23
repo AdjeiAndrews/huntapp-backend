@@ -80,14 +80,28 @@ public class ProductService {
         return getProductResponse(product);
     }
 
-    public void deleteProduct(int id) {
-        productRepository.deleteById(id);
-    }
-
-    public ProductResponse updateProduct(int id, ProductRequest updatedProduct) {
+    public void deleteProduct(int id, HttpServletRequest request) {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Product not found")
         );
+        String username = getUsernameFromToken(request);
+        if (!product.getPostedBy().getUsername().equals(username)) {
+            throw new RuntimeException("You are not permitted to delete this product");
+        }
+        
+        productRepository.deleteById(id);
+    }
+
+    public ProductResponse updateProduct(int id, ProductRequest updatedProduct, HttpServletRequest request) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Product not found")
+        );
+
+        String username = getUsernameFromToken(request);
+        if (!product.getPostedBy().getUsername().equals(username)) {
+            throw new RuntimeException("You are not permitted to update this product");
+        }
+
         product.setName(updatedProduct.getName());
         product.setDescription(updatedProduct.getDescription());
         product.setTagline(updatedProduct.getTagline());
