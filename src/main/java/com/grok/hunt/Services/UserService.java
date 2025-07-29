@@ -34,7 +34,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public Users register(RegisterRequest registerRequest){
-        if (repo.findByUsername(registerRequest.getUsername()).isPresent()) {
+
+        if (repo.existsByUsername(registerRequest.getUsername())) {
             throw new UserAlreadyExistsException("Username already exists: " + registerRequest.getUsername());
         }
 
