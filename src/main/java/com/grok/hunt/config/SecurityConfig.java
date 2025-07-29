@@ -55,13 +55,7 @@ public class SecurityConfig {
 //    public UserDetailsService userDetailsService() {
 //
 //    }
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-        authProvider.setUserDetailsService(userDetailsService);
-        return authProvider;
-    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

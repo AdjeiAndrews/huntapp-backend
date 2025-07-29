@@ -88,7 +88,7 @@ public class ProductService {
         if (!product.getPostedBy().getUsername().equals(username)) {
             throw new RuntimeException("You are not permitted to delete this product");
         }
-        
+
         productRepository.deleteById(id);
     }
 
