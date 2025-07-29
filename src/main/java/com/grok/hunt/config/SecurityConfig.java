@@ -32,25 +32,21 @@ import java.util.List;
 public class SecurityConfig {
 
     @Autowired
-    MyUserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService;
 
     @Autowired
     private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/auth/register").permitAll()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                ).addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement((session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)))
                 .build();
     }
-
 
 //    @Bean
 //    public UserDetailsService userDetailsService() {
