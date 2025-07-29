@@ -8,14 +8,17 @@ import com.grok.hunt.config.UserAlreadyExistsException;
 import com.grok.hunt.dtos.LoginRequest;
 import com.grok.hunt.dtos.LoginResponse;
 import com.grok.hunt.dtos.RegisterRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
     @Autowired
@@ -27,7 +30,8 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Users register(RegisterRequest registerRequest){
         if (repo.findByUsername(registerRequest.getUsername()).isPresent()) {
@@ -37,7 +41,7 @@ public class UserService {
         Users user = new Users();
 
         user.setUsername(registerRequest.getUsername());
-        user.setPassword(encoder.encode(registerRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         return repo.save(user);
     }
 
@@ -55,6 +59,7 @@ public class UserService {
             loginResponse.setStatus(status);
             return loginResponse;
         } catch (RuntimeException e) {
+            log.error(e.getMessage());
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(null);
             loginResponse.setStatus("failed");
