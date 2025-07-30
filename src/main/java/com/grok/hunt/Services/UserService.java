@@ -14,9 +14,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -58,6 +59,13 @@ public class UserService {
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setToken(token);
             loginResponse.setStatus(status);
+
+            Optional<Users> user = repo.findByUsername(loginRequest.getUsername());
+            if (user.isEmpty()) {
+                throw new RuntimeException("User not found: " + loginRequest.getUsername());
+            }
+
+            loginResponse.setUser(user.get());
             return loginResponse;
         } catch (RuntimeException e) {
             log.error(e.getMessage());
